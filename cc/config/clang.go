@@ -114,6 +114,8 @@ func init() {
 		// fixed.
 		//"-Werror=null-dereference",
 		"-Werror=return-type",
+		"-Wno-user-defined-warnings",
+		"-Wno-error",
 	}, " "))
 }
 
