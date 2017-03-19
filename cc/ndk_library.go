@@ -162,6 +162,14 @@ func shouldUseVersionScript(stub *stubDecorator) (bool, error) {
 		return true, nil
 	}
 
+	if stub.properties.Unversioned_until == "current" {
+		if stub.properties.ApiLevel == "current" {
+			return true, nil
+		} else {
+			return false, nil
+		}
+	}
+
 	if stub.properties.ApiLevel == "current" {
 		return true, nil
 	}
@@ -327,7 +335,7 @@ func newStubLibrary() (*Module, []interface{}) {
 	module.linker = stub
 	module.installer = stub
 
-	return module, []interface{}{&stub.properties}
+	return module, []interface{}{&stub.properties, &library.MutatedProperties}
 }
 
 func ndkLibraryFactory() (blueprint.Module, []interface{}) {

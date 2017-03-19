@@ -43,7 +43,7 @@ type AndroidMkData struct {
 	OutputFile OptionalPath
 	Disabled   bool
 
-	Custom func(w io.Writer, name, prefix string) error
+	Custom func(w io.Writer, name, prefix, moduleDir string) error
 
 	Extra []func(w io.Writer, outputFile Path) error
 }
@@ -164,6 +164,11 @@ func translateAndroidMkModule(ctx blueprint.SingletonContext, w io.Writer, mod b
 		return err
 	}
 
+	// Make does not understand LinuxBionic
+	if amod.Os() == LinuxBionic {
+		return nil
+	}
+
 	if data.SubName != "" {
 		name += data.SubName
 	}
@@ -185,7 +190,7 @@ func translateAndroidMkModule(ctx blueprint.SingletonContext, w io.Writer, mod b
 			prefix = "2ND_" + prefix
 		}
 
-		return data.Custom(w, name, prefix)
+		return data.Custom(w, name, prefix, filepath.Dir(ctx.BlueprintFile(mod)))
 	}
 
 	if data.Disabled {
